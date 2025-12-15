@@ -87,7 +87,7 @@ export default function Landing() {
                                             delay={150}
                                             animateBy="words"
                                             direction="top"
-                                            className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]"
+                                            className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]"
                                         />
                                     </div>
                                     <motion.div
@@ -95,31 +95,31 @@ export default function Landing() {
                                         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                                         transition={{ delay: 0.5, duration: 0.6, ease: 'easeOut' }}
                                     >
-                                        <GradientText className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]" animationSpeed={5}>
+                                        <GradientText className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]" animationSpeed={5}>
                                             Confidence.
                                         </GradientText>
                                     </motion.div>
                                 </div>
 
-                                <motion.p variants={itemVariants} className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-lg leading-relaxed">
+                                <motion.p variants={itemVariants} className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-lg leading-relaxed">
                                     Enterprise-grade AI analysis for contracts, reports, and legal documents. Detect risks, verify sources, and ensure compliance in seconds.
                                 </motion.p>
 
                                 <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
-                                    <Link to="/signup" className="group relative px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black rounded-full font-semibold text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/20">
-                                        <span className="relative z-10 flex items-center gap-2">
+                                    <Link to="/signup" className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gray-900 dark:bg-white text-white dark:text-black rounded-full font-semibold text-base sm:text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/20 text-center">
+                                        <span className="relative z-10 flex items-center justify-center gap-2">
                                             Start Analyzing
                                             <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity" />
                                     </Link>
-                                    <Link to="/try" className="px-8 py-4 bg-gradient-to-r from-primary-500/10 to-purple-500/10 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-full font-semibold text-lg hover:from-primary-500/20 hover:to-purple-500/20 transition-all backdrop-blur-sm">
+                                    <Link to="/try" className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-primary-500/10 to-purple-500/10 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-full font-semibold text-base sm:text-lg hover:from-primary-500/20 hover:to-purple-500/20 transition-all backdrop-blur-sm text-center">
                                         ✨ Try for Free
                                     </Link>
                                 </motion.div>
 
-                                <motion.div variants={itemVariants} className="mt-12 flex items-center gap-8 text-gray-400 dark:text-gray-500 grayscale opacity-70">
-                                    {/* Placeholder Logos */}
+                                {/* Trust badges - hidden on mobile */}
+                                <motion.div variants={itemVariants} className="mt-12 hidden sm:flex items-center gap-8 text-gray-400 dark:text-gray-500 grayscale opacity-70">
                                     <div className="h-8 w-24 bg-current rounded opacity-20" />
                                     <div className="h-8 w-24 bg-current rounded opacity-20" />
                                     <div className="h-8 w-24 bg-current rounded opacity-20" />
@@ -172,16 +172,16 @@ export default function Landing() {
                 </section>
 
                 {/* Bento Grid Features */}
-                <section id="features" className="py-32 bg-gray-50 dark:bg-[#050505] relative">
+                <section id="features" className="py-16 sm:py-32 bg-gray-50 dark:bg-[#050505] relative">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center max-w-3xl mx-auto mb-20">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Everything you need to <br /><GradientText animationSpeed={5}>verify with confidence.</GradientText></h2>
-                            <p className="text-lg text-gray-600 dark:text-gray-400">
+                        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-20">
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6 tracking-tight">Everything you need to <br className="hidden sm:block" /><GradientText animationSpeed={5}>verify with confidence.</GradientText></h2>
+                            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-0">
                                 Our platform combines advanced OCR, natural language processing, and pattern recognition to deliver bank-grade analysis.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:auto-rows-[300px]">
                             {/* Large Card */}
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -323,11 +323,11 @@ export default function Landing() {
                 </section>
 
                 {/* How it Works Section */}
-                <section id="how-it-works" className="py-24 bg-white dark:bg-[#0A0A0A]">
+                <section id="how-it-works" className="py-16 sm:py-24 bg-white dark:bg-[#0A0A0A]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl font-bold mb-4"><GradientText animationSpeed={5}>How it Works</GradientText></h2>
-                            <p className="text-gray-600 dark:text-gray-400">Three simple steps to verify any document.</p>
+                        <div className="text-center mb-10 sm:mb-16">
+                            <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"><GradientText animationSpeed={5}>How it Works</GradientText></h2>
+                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Three simple steps to verify any document.</p>
                         </div>
 
                         {/* Steps with Timeline */}
@@ -349,7 +349,7 @@ export default function Landing() {
                             </div>
 
                             {/* Step Cards */}
-                            <div className="grid md:grid-cols-3 gap-8 relative z-10">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 relative z-10">
                                 {[
                                     { step: 1, title: "Upload", desc: "Drag and drop your PDF or image file.", color: "59, 130, 246", icon: "📄" },
                                     { step: 2, title: "Analyze", desc: "Our AI scans for anomalies and patterns.", color: "168, 85, 247", icon: "🔍" },
@@ -409,11 +409,11 @@ export default function Landing() {
                 </section>
 
                 {/* Pricing Section */}
-                <section id="pricing" className="py-24 bg-gray-50 dark:bg-[#050505]">
+                <section id="pricing" className="py-16 sm:py-24 bg-gray-50 dark:bg-[#050505]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl font-bold mb-4"><GradientText animationSpeed={5}>Simple Pricing</GradientText></h2>
-                            <p className="text-gray-600 dark:text-gray-400">Start for free, upgrade for power.</p>
+                        <div className="text-center mb-10 sm:mb-16">
+                            <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"><GradientText animationSpeed={5}>Simple Pricing</GradientText></h2>
+                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Start for free, upgrade for power.</p>
                         </div>
                         <ChromaGrid
                             variant="pricing"

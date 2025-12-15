@@ -1,0 +1,58 @@
+/* Bento Card Effect Styles */
+.bento-effect-card {
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.bento-effect-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Border glow effect */
+.bento-border-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: radial-gradient(var(--glow-radius, 200px) circle at var(--glow-x, 50%) var(--glow-y, 50%),
+            rgba(var(--glow-color, 59, 130, 246), calc(var(--glow-intensity, 0) * 0.6)) 0%,
+            rgba(var(--glow-color, 59, 130, 246), calc(var(--glow-intensity, 0) * 0.3)) 30%,
+            transparent 60%);
+    border-radius: inherit;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.bento-border-glow:hover {
+    box-shadow:
+        0 4px 20px rgba(59, 130, 246, 0.15),
+        0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+/* Particle styles */
+.bento-particle {
+    position: absolute;
+    pointer-events: none;
+}
+
+.bento-particle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: rgba(59, 130, 246, 0.2);
+    border-radius: 50%;
+    z-index: -1;
+}

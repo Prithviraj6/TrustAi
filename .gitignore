@@ -47,4 +47,8 @@ htmlcov/
 
 # Config
 .npmrc
-.python-version
+# Postman
+*postman*
+frontend-ui/README.md
+frontend-ui/walkthrough.md
+

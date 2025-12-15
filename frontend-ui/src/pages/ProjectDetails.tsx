@@ -65,9 +65,47 @@ export default function ProjectDetails() {
     const [files, setFiles] = useState<any[]>([]);
     const [messages, setMessages] = useState<AnalysisResult[]>([]);
 
+    // Simple cache key for this project
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
     useEffect(() => {
         if (!id) return;
 
+        // Check if we have cached data for this project
+        const cacheKey = `project_${id}`;
+        const cachedData = sessionStorage.getItem(cacheKey);
+
+        if (cachedData) {
+            try {
+                const { project: cachedProject, files: cachedFiles, messages: cachedMessages, timestamp } = JSON.parse(cachedData);
+                const isStale = Date.now() - timestamp > CACHE_TTL;
+
+                if (!isStale && cachedProject && cachedFiles && cachedMessages) {
+                    // Use cached data (restore Date objects)
+                    const restoredProject = {
+                        ...cachedProject,
+                        lastUpdated: new Date(cachedProject.lastUpdated),
+                        created: new Date(cachedProject.created),
+                        history: (cachedProject.history || []).map((h: any) => ({ ...h, timestamp: new Date(h.timestamp) })),
+                        documents: (cachedProject.documents || []).map((d: any) => ({ ...d, addedAt: new Date(d.addedAt) })),
+                        notes: (cachedProject.notes || []).map((n: any) => ({ ...n, createdAt: new Date(n.createdAt), updatedAt: new Date(n.updatedAt) })),
+                        activityLog: cachedProject.activityLog || [],
+                        tags: cachedProject.tags || []
+                    };
+                    setProject(restoredProject);
+                    setTitleInput(restoredProject.name);
+                    setFiles(cachedFiles || []);
+                    setMessages(cachedMessages || []);
+                    setIsFetchingProject(false);
+                    return;
+                }
+            } catch (e) {
+                // Invalid cache, fetch fresh
+                sessionStorage.removeItem(cacheKey);
+            }
+        }
+
+        // Fetch fresh data
         setIsFetchingProject(true);
         projectsService.getProject(id)
             .then((data: any) => {
@@ -101,10 +139,11 @@ export default function ProjectDetails() {
                 // Fetch files separately
                 return Promise.all([
                     filesService.getProjectFiles(id),
-                    messagesService.getMessages(id)
+                    messagesService.getMessages(id),
+                    Promise.resolve(fetchedProject)
                 ]);
             })
-            .then(([fetchedFiles, fetchedMessages]: [any[], any[]]) => {
+            .then(([fetchedFiles, fetchedMessages, fetchedProject]: [any[], any[], Project]) => {
                 const mappedFiles = fetchedFiles.map((f: any) => ({
                     id: f.id,
                     name: f.filename,
@@ -114,12 +153,19 @@ export default function ProjectDetails() {
                     url: filesService.getFileUrl(f.id)
                 }));
                 setFiles(mappedFiles);
-
-                // The current UI expects `project.history` which is `AnalysisResult[]` (bundled).
-                // But our new backend saves individual messages.
-                // I will change `messages` state to be `any[]` and render them linearly, 
-                // modifying the render loop below.
                 setMessages(fetchedMessages);
+
+                // Cache the data
+                try {
+                    sessionStorage.setItem(cacheKey, JSON.stringify({
+                        project: fetchedProject,
+                        files: mappedFiles,
+                        messages: fetchedMessages,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) {
+                    // SessionStorage might be full, ignore
+                }
             })
             .catch((err: any) => {
                 console.error("Failed to fetch project:", err);
@@ -128,8 +174,7 @@ export default function ProjectDetails() {
             .finally(() => {
                 setIsFetchingProject(false);
             });
-    }
-        , [id, showToast]);
+    }, [id, showToast]);
 
     // Scroll to bottom of chat
     useEffect(() => {
@@ -234,6 +279,9 @@ export default function ProjectDetails() {
             // Refresh messages to show the new AI response
             const updatedMsgs = await messagesService.getMessages(project.id);
             setMessages(updatedMsgs);
+
+            // Invalidate cache so next load fetches fresh
+            sessionStorage.removeItem(`project_${project.id}`);
 
             setChatInput('');
             setPreviewUrl(null);

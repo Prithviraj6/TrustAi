@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     ArrowTrendingUpIcon,
     DocumentTextIcon,
@@ -21,16 +21,21 @@ import {
     Bar,
     Cell
 } from 'recharts';
-import { useToast } from '../context/ToastContext';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { projectsService } from '../services/projects';
+import { useProjects } from '../context/ProjectContext';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-    const { showToast } = useToast();
-    const [projects, setProjects] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { projects: contextProjects, isLoading: loading, refreshProjects } = useProjects();
+
+    // Sort projects by date (most recent first) using useMemo
+    const projects = useMemo(() => {
+        return [...contextProjects].sort((a: any, b: any) =>
+            new Date(b.created).getTime() - new Date(a.created).getTime()
+        );
+    }, [contextProjects]);
+
     const [stats, setStats] = useState([
         { name: 'Total Analyses', value: '0', change: '+0%', changeType: 'increase', icon: DocumentTextIcon },
         { name: 'Avg Trust Score', value: '0', change: '+0%', changeType: 'increase', icon: ShieldCheckIcon },
@@ -46,23 +51,6 @@ const Dashboard = () => {
     ]);
 
     const [trendData, setTrendData] = useState<any[]>([]);
-
-    const fetchProjects = async () => {
-        setLoading(true);
-        try {
-            const data = await projectsService.getAllProjects();
-            // Sort by date desc for the table
-            const sortedData = data.sort((a: any, b: any) => new Date(b.created).getTime() - new Date(a.created).getTime());
-            setProjects(sortedData);
-            calculateStats(sortedData);
-            calculateCharts(sortedData);
-        } catch (error) {
-            console.error('Failed to fetch projects:', error);
-            showToast('error', 'Failed to load dashboard data');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const calculateStats = (data: any[]) => {
         const total = data.length;
@@ -129,9 +117,13 @@ const Dashboard = () => {
         setTrendData(newTrendData);
     };
 
+    // Calculate stats and charts when projects change
     useEffect(() => {
-        fetchProjects();
-    }, []);
+        if (projects.length > 0) {
+            calculateStats(projects);
+            calculateCharts(projects);
+        }
+    }, [projects]);
 
     const getStatus = (score: number) => {
         if (score === 0) return 'Pending';
@@ -158,7 +150,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={fetchProjects}
+                        onClick={refreshProjects}
                         className="px-4 py-2 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
                     >
                         Refresh Data

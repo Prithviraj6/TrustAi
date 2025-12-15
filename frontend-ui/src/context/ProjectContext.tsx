@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
 import type { Project } from '../types';
 import { projectsService } from '../services/projects';
 import { useToast } from './ToastContext';
@@ -19,8 +19,15 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     const [projects, setProjects] = useState<Project[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { showToast } = useToast();
+    const hasFetched = useRef(false);  // Track if we've already fetched
 
-    const fetchProjects = async () => {
+    const fetchProjects = async (force = false) => {
+        // Skip if already fetched and not forced
+        if (hasFetched.current && !force && projects.length > 0) {
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -54,9 +61,14 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
                 tags: p.tags || []
             }));
             setProjects(formattedProjects);
-        } catch (error) {
+            hasFetched.current = true;  // Mark as fetched
+        } catch (error: any) {
             console.error('Failed to fetch projects:', error);
-            showToast('error', 'Failed to load projects');
+            // Only show toast if not a network/connection issue (user might just be offline briefly)
+            if (error?.response?.status && error.response.status !== 401) {
+                showToast('error', 'Failed to load projects. Please refresh.');
+            }
+            // Don't mark as fetched so it can retry
         } finally {
             setIsLoading(false);
         }
@@ -126,7 +138,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
             updateProject,
             deleteProject,
             getProject,
-            refreshProjects: fetchProjects
+            refreshProjects: () => fetchProjects(true)  // Force refresh when explicitly called
         }}>
             {children}
         </ProjectContext.Provider>

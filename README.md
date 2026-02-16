@@ -81,9 +81,6 @@ For detailed installation instructions, API references, and component breakdowns
 
 ---
 
-## 📸 Screenshots
-
-*(Add screenshots of your Dashboard, Analysis Page, and Landing Page here)*
 
 ---
 
